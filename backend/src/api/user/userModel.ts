@@ -10,7 +10,10 @@ export const UserSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string().email(),
-  age: z.number(),
+  dob: z.date(),
+  primaryLanguage: z.string(),
+  secondaryLanguages: z.array(z.string()),
+  fundingSource: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

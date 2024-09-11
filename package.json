@@ -1,21 +1,18 @@
 {
-  "name": "turnpoint_challenge",
+  "name": "simple-client-management-system",
   "version": "1.0.0",
   "description": "Simple Client Management System",
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"cd frontend && yarn workspace app start\" \"cd backend && npm run dev\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/everdeep/turnpoint_challenge.git"
-  },
+  "repository": "everdeep/simple-client-management-system",
   "author": "Sebastian Bird",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/everdeep/turnpoint_challenge/issues"
+    "url": "https://github.com/everdeep/simple-client-management-system/issues"
   },
-  "homepage": "https://github.com/everdeep/turnpoint_challenge#readme",
+  "homepage": "https://github.com/everdeep/simple-client-management-system#readme",
   "devDependencies": {
     "concurrently": "^9.0.0"
   }

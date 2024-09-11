@@ -1,4 +1,4 @@
-# Simple Client Management System
+# Simple Client Management System (SCMS)
 ## Project Outline
 Using an SQL based database (using a container instance of your choice), create a database to store the following information:
 - Basic client information - includes client name, date of birth, main/secondary languages as well as primary “funding source”.
@@ -12,6 +12,7 @@ Finally, create a simple React and TypeScript front end to list and create clien
 
 ## Requirements
 
+- Docker Desktop with Docker Compose ([Instructions](#installing-docker-compose))
 - Node.js v18+ with Corepack ($ corepack enable)
 - VS Code editor with recommended extensions
 - Optionally React Developer Tools and Reactime browser extensions
@@ -22,6 +23,7 @@ Finally, create a simple React and TypeScript front end to list and create clien
 - MacOS 14.5 (Sonoma) M2
 
 ## Installation
+### Project code
 
 ```bash
 # Clone the repository
@@ -31,6 +33,14 @@ git clone https://github.com/everdeep/turnpoint_challenge.git
 ```bash
 # Install dependencies
 ./setup.sh
+```
+
+### Database
+The `docker-compose.yml` file used in this project is set up to use a MySQL database due to using a Mac environment.
+
+```bash
+# Start the database
+docker-compose up -d
 ```
 
 ## Usage
@@ -88,3 +98,34 @@ npm warn EBADENGINE }
 ```
 
 Please update your Node.js version to the latest stable version.
+
+## Installing Docker Compose
+1. **Download Docker Desktop**: Go to the official Docker website and download Docker Desktop:
+   - [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+   - [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
+
+
+2. **Install Docker Desktop**
+3. **Run Docker Desktop**
+4. **Check Docker and Docker Compose Installation**: Open your terminal and check that both Docker and Docker Compose are installed by running the following commands:
+
+    ```bash
+    docker --version
+    ```
+    This should show you the Docker version, something like:
+
+    ```bash
+    Docker version 20.10.xx, build xxxx
+    ```
+
+    Now check Docker Compose:
+    ```bash
+    docker-compose --version
+    ```
+
+    This should show the Docker Compose version:
+    ```bash
+    Docker Compose version 1.29.x, build xxxx
+    ```
+
+    Note: Docker Desktop includes Docker Compose by default, so installing Docker Desktop also installs Docker Compose.
