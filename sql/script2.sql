@@ -1,4 +1,4 @@
-USE scms_dev;
+USE scms_test;
 
 # Insert into funding_sources table NDIS, HCP, CHSP, DVA, HACC
 INSERT INTO funding_sources (name) VALUES ('NDIS'), ('HCP'), ('CHSP'), ('DVA'), ('HACC');

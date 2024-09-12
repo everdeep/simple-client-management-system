@@ -1,3 +1,15 @@
+DROP DATABASE IF EXISTS scms_test;
+
+CREATE DATABASE scms_test;
+
+USE scms_test;
+
+CREATE USER 'test_local' @'%' IDENTIFIED BY 'test_password@123';
+
+GRANT ALL PRIVILEGES ON scms_test.* TO 'test_local' @'%';
+
+FLUSH PRIVILEGES;
+
 CREATE TABLE IF NOT EXISTS client_languages (
     id INTEGER NOT NULL AUTO_INCREMENT,
     is_primary BOOL NOT NULL DEFAULT FALSE,
@@ -43,5 +55,12 @@ ADD CONSTRAINT FK_clients_TO_client_languages FOREIGN KEY (client_id) REFERENCES
 CREATE UNIQUE INDEX clients_index_email ON clients (email ASC);
 
 CREATE UNIQUE INDEX languages_index_name ON languages (name ASC);
+
+CREATE UNIQUE INDEX client_languages_index_client_id_language_id ON client_languages (
+    client_id ASC,
+    language_id ASC
+);
+
+CREATE UNIQUE INDEX client_languages_index_client_id_is_primary ON client_languages (client_id ASC, is_primary ASC);
 
 CREATE UNIQUE INDEX funding_sources_name ON funding_sources (name ASC);

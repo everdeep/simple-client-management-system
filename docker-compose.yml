@@ -6,9 +6,6 @@ services:
     container_name: mysql_container
     environment:
       MYSQL_ROOT_PASSWORD: ReallyStrong@Passw0rd
-      MYSQL_DATABASE: scms_db
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: dev_password@123
     ports:
       - "3306:3306"
     volumes:
