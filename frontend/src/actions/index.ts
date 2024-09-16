@@ -1,28 +1,9 @@
-import { type } from '../types';
+import { type } from '@src/types';
 
 interface IAction {
   type: string;
   payload?: any;
 }
-
-export const signIn = (payload: any) => {
-  return {
-    type: type.SIGN_IN,
-    payload: payload,
-  };
-};
-
-export const signOut = () => {
-  return {
-    type: type.SIGN_OUT,
-  };
-};
-
-export const setPage = (page: string) => {
-  return {
-    type: page,
-  };
-};
 
 export const formUpdate = (fieldName: string, fieldValue: any) => {
   return {

@@ -8,12 +8,33 @@ export const type = {
   ALERT_CLEAR: 'ALERT_CLEAR',
 };
 
+export type JsonApiResponse<T> = {
+  success: boolean;
+  message: string;
+  responseObject: T;
+  statusCode: number;
+};
+
 export type Client = {
-  name: {
-    firstName: string;
-    lastName: string;
-  };
-  address: string;
-  city: string;
-  state: string;
+  id?: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  createdAt?: string;
+  updatedAt?: string;
+  fundingSource: string;
+  languages: ClientLanguage[];
+};
+
+export type ClientLanguage = {
+  id: string;
+  name?: string;
+  isPrimary: string;
+};
+
+export type Language = {
+  id: string;
+  name: string;
 };
