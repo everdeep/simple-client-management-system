@@ -8,5 +8,5 @@ export type Language = z.infer<typeof LanguageSchema>;
 export const LanguageSchema = z.object({
     id: commonValidations.id,
     name: z.string().optional(),
-    is_primary: commonValidations.bool,
+    isPrimary: commonValidations.bool,
 });

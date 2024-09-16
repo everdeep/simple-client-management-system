@@ -8,20 +8,20 @@ extendZodWithOpenApi(z);
 export type Client = z.infer<typeof ClientSchema>;
 export const ClientSchema = z.object({
     id: commonValidations.id,
-    first_name: z.string(),
-    middle_name: z.string().optional(),
-    last_name: z.string(),
+    firstName: z.string(),
+    middleName: z.string().optional(),
+    lastName: z.string(),
     email: z.string().email(),
     dob: commonValidations.date,
-    created_at: z.string().optional(),
-    updated_at: z.string().optional(),
-    funding_id: commonValidations.id,
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+    fundingId: commonValidations.id,
 });
 
 export type ClientWithLanguages = z.infer<typeof ClientWithLanguagesSchema>;
-export const ClientWithLanguagesSchema = ClientSchema.omit({ funding_id: true }).merge(
+export const ClientWithLanguagesSchema = ClientSchema.omit({ fundingId: true }).merge(
     z.object({
-        funding_source: z.string(),
+        fundingSource: z.string(),
         languages: z.array(LanguageSchema),
     })
 );
@@ -32,8 +32,17 @@ export const GetClientSchema = z.object({
 });
 
 // Input Validation for 'POST clients' endpoint
+export type CreateClient = z.infer<typeof CreateClientSchema.shape.body>;
 export const CreateClientSchema = z.object({
-    body: ClientSchema.omit({ id: true, created_at: true, updated_at: true }),
+    body: z.object({
+        firstName: z.string(),
+        middleName: z.string().optional(),
+        lastName: z.string(),
+        email: commonValidations.email,
+        dob: commonValidations.date,
+        fundingId: commonValidations.id,
+        languages: z.array(LanguageSchema.omit({ name: true })),
+    }),
 });
 
 // Input Validation for 'PUT clients' endpoint
@@ -41,12 +50,12 @@ export type UpdateClient = z.infer<typeof UpdateClientSchema.shape.body>;
 export const UpdateClientSchema = z.object({
     params: z.object({ id: commonValidations.id }),
     body: z.object({
-        first_name: z.string(),
-        middle_name: z.string().optional(),
-        last_name: z.string(),
+        firstName: z.string(),
+        middleName: z.string().optional(),
+        lastName: z.string(),
         email: commonValidations.email,
         dob: commonValidations.date,
-        funding_id: commonValidations.id,
+        fundingId: commonValidations.id,
         languages: z.array(LanguageSchema.omit({ name: true })),
     }),
 });

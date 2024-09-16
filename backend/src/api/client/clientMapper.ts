@@ -9,24 +9,24 @@ export class ClientMapper {
             if (!clientsMap.get(row.id)) {
                 clientsMap.set(row.id, {
                     id: row.id,
-                    first_name: row.first_name,
-                    middle_name: row.middle_name,
-                    last_name: row.last_name,
+                    firstName: row.firstName,
+                    middleName: row.middleName,
+                    lastName: row.lastName,
                     email: row.email,
                     dob: row.dob,
-                    created_at: row.created_at,
-                    updated_at: row.updated_at,
-                    funding_source: row.funding_source,
+                    createdAt: row.createdAt,
+                    updatedAt: row.updatedAt,
+                    fundingSource: row.fundingSource,
                     languages: [],
                 });
             }
 
             // Add language if it exists
-            if (row.language_name) {
+            if (row.languageName) {
                 clientsMap.get(row.id)?.languages.push({
-                    id: row.language_id,
-                    name: row.language_name,
-                    is_primary: row.is_primary,
+                    id: row.languageId,
+                    name: row.languageName,
+                    isPrimary: row.isPrimary,
                 });
             }
         });

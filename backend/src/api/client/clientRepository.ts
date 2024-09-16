@@ -2,23 +2,24 @@ import type { Client } from '@/api/client/clientModel';
 import pool from '@/common/utils/db';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { Language } from '@/api/language/languageModel';
+import { toSnakeCase } from '@/common/utils/helpers';
 
 export class ClientRepository {
     async findAll(): Promise<RowDataPacket[]> {
         const [rows] = await pool.query<RowDataPacket[]>(`
             SELECT
                 c.id, 
-                c.first_name, 
-                c.middle_name, 
-                c.last_name, 
-                c.email, 
+                c.first_name as firstName, 
+                c.middle_name as middleName, 
+                c.last_name as lastName,
+                c.email,
                 c.dob, 
-                c.created_at, 
-                c.updated_at, 
-                f.name AS funding_source,
-                l.id AS language_id, 
-                l.name AS language_name, 
-                cl.is_primary 
+                c.created_at as createdAt, 
+                c.updated_at as updatedAt,
+                f.name AS fundingSource,
+                l.name AS languageName,
+                l.id AS languageId,
+                cl.is_primary as isPrimary
             FROM clients c
             LEFT JOIN client_languages cl ON c.id = cl.client_id
             LEFT JOIN languages l ON cl.language_id = l.id
@@ -32,17 +33,17 @@ export class ClientRepository {
             `
             SELECT
                 c.id, 
-                c.first_name, 
-                c.middle_name, 
-                c.last_name, 
-                c.email, 
+                c.first_name as firstName, 
+                c.middle_name as middleName, 
+                c.last_name as lastName,
+                c.email,
                 c.dob, 
-                c.created_at, 
-                c.updated_at, 
-                f.name AS funding_source, 
-                l.name AS language_name,
-                l.id AS language_id,
-                cl.is_primary 
+                c.created_at as createdAt, 
+                c.updated_at as updatedAt,
+                f.name AS fundingSource,
+                l.name AS languageName, 
+                l.id AS languageId,
+                cl.is_primary as isPrimary
             FROM clients c
             LEFT JOIN client_languages cl ON c.id = cl.client_id
             LEFT JOIN languages l ON cl.language_id = l.id
@@ -53,9 +54,34 @@ export class ClientRepository {
         return rows;
     }
 
-    async createClient(client: Client): Promise<number> {
-        const [result] = await pool.query<ResultSetHeader>('INSERT INTO clients SET ?', client);
-        return result.insertId;
+    async createClient(client: Client, languages: Language[]): Promise<number> {
+        let clientId: number;
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Create client
+            client = toSnakeCase(client);
+            let [result] = await connection.query<ResultSetHeader>('INSERT INTO clients SET ?', client);
+            clientId = result.insertId;
+
+            // Create client languages
+            const values = languages.map((language) => [clientId, language.id, language.isPrimary]);
+            [result] = await connection.query<ResultSetHeader>(
+                'INSERT INTO client_languages (client_id, language_id, is_primary) VALUES ?',
+                [values]
+            );
+
+            await connection.commit();
+        } catch (e) {
+            console.error('Error creating client', e);
+            await connection.rollback();
+            return 0;
+        } finally {
+            connection.release();
+        }
+
+        return clientId;
     }
 
     async updateClient(id: number, client: Client, languages: Language[]): Promise<number> {
@@ -65,13 +91,14 @@ export class ClientRepository {
             await connection.beginTransaction();
 
             // Update client information
+            client = toSnakeCase(client);
             let [result] = await connection.query<ResultSetHeader>('UPDATE clients SET ? WHERE id = ?', [client, id]);
             affectedRows = result.affectedRows;
 
             // Update client languages
             if (languages) {
                 await connection.query('DELETE FROM client_languages WHERE client_id = ?', [id]);
-                const values = languages.map((language) => [id, language.id, language.is_primary]);
+                const values = languages.map((language) => [id, language.id, language.isPrimary]);
                 [result] = await connection.query<ResultSetHeader>(
                     'INSERT INTO client_languages (client_id, language_id, is_primary) VALUES ?',
                     [values]
@@ -100,9 +127,9 @@ export class ClientRepository {
         const [rows] = await pool.query<RowDataPacket[]>(
             `
             SELECT
-                l.id AS language_id,
-                l.name AS language_name,
-                cl.is_primary
+                l.id,
+                l.name,
+                cl.is_primary AS isPrimary
             FROM client_languages cl
             LEFT JOIN languages l ON cl.language_id = l.id
             WHERE cl.client_id = ?`,

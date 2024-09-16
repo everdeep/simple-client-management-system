@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { Client, ClientWithLanguages, UpdateClient } from '@/api/client/clientModel';
+import { Client, ClientWithLanguages, CreateClient, UpdateClient } from '@/api/client/clientModel';
 import { Language } from '@/api/language/languageModel';
 import { clientMapper } from '@/api/client/clientMapper';
 import { ClientRepository } from '@/api/client/clientRepository';
@@ -58,9 +58,32 @@ export class ClientService {
     }
 
     // Creates a new client
-    async createClient(client: Client): Promise<ServiceResponse<number | null>> {
+    async createClient(clientCreate: CreateClient): Promise<ServiceResponse<number | null>> {
         try {
-            const result = await this.clientRepository.createClient(client);
+            const { languages, ...client } = clientCreate;
+
+            // Check unique language IDs
+            const uniqueLanguages = new Set<number>();
+            for (const language of languages) {
+                if (uniqueLanguages.has(language.id)) {
+                    return ServiceResponse.failure('Language IDs must be unique', null, StatusCodes.BAD_REQUEST);
+                }
+                uniqueLanguages.add(language.id);
+            }
+
+            // Can only be one primary language
+            const primaryLanguages = languages.filter((language) => language.isPrimary);
+            if (primaryLanguages.length > 1) {
+                return ServiceResponse.failure('Only one primary language is allowed', null, StatusCodes.BAD_REQUEST);
+            } else if (primaryLanguages.length === 0) {
+                return ServiceResponse.failure('Primary language is required', null, StatusCodes.BAD_REQUEST);
+            }
+
+            const result = await this.clientRepository.createClient(client as Client, languages);
+            if (result === 0) {
+                return ServiceResponse.failure('Failed to create client', null, StatusCodes.INTERNAL_SERVER_ERROR);
+            }
+
             return ServiceResponse.success<number>('Client created', result);
         } catch (ex) {
             const errorMessage = `Error creating client: ${(ex as Error).message}`;
@@ -95,14 +118,16 @@ export class ClientService {
             }
 
             // Can only be one primary language
-            const primaryLanguages = languages.filter((language) => language.is_primary);
+            const primaryLanguages = languages.filter((language) => language.isPrimary);
             if (primaryLanguages.length > 1) {
                 return ServiceResponse.failure('Only one primary language is allowed', null, StatusCodes.BAD_REQUEST);
+            } else if (primaryLanguages.length === 0) {
+                return ServiceResponse.failure('Primary language is required', null, StatusCodes.BAD_REQUEST);
             }
 
             const result = await this.clientRepository.updateClient(id, client as Client, languages);
             if (result === 0) {
-                throw new Error('No client found or updated');
+                return ServiceResponse.failure('Failed to update client', null, StatusCodes.INTERNAL_SERVER_ERROR);
             }
 
             return ServiceResponse.success<number>('Client updated', result);
