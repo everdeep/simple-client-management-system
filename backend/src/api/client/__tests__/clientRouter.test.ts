@@ -25,17 +25,17 @@ describe('Client API Endpoints', () => {
             const testId = 1;
             const expectedClient = {
                 id: 1,
-                first_name: 'John',
-                middle_name: 'Smith',
-                last_name: 'Doe',
+                firstName: 'John',
+                middleName: 'Smith',
+                lastName: 'Doe',
                 email: 'johndoe@fake.com',
                 dob: '1990-01-01',
-                funding_source: 'NDIS',
+                fundingSource: 'NDIS',
                 languages: [
                     {
                         id: 1,
                         name: 'English',
-                        is_primary: true,
+                        isPrimary: true,
                     },
                 ],
             } as ClientWithLanguages;
@@ -88,16 +88,16 @@ function compareClients(mockClient: ClientWithLanguages, responseClient: ClientW
     }
 
     expect(responseClient.id).toEqual(mockClient.id);
-    expect(responseClient.first_name).toEqual(mockClient.first_name);
-    expect(responseClient.middle_name).toEqual(mockClient.middle_name);
-    expect(responseClient.last_name).toEqual(mockClient.last_name);
+    expect(responseClient.firstName).toEqual(mockClient.firstName);
+    expect(responseClient.middleName).toEqual(mockClient.middleName);
+    expect(responseClient.lastName).toEqual(mockClient.lastName);
     expect(responseClient.email).toEqual(mockClient.email);
     expect(responseClient.dob).toEqual(mockClient.dob);
-    expect(responseClient.funding_source).toEqual(mockClient.funding_source);
+    expect(responseClient.fundingSource).toEqual(mockClient.fundingSource);
     expect(responseClient.languages.length).toEqual(mockClient.languages.length);
     responseClient.languages.forEach((language, index) => {
         expect(language.id).toEqual(mockClient.languages[index].id);
         expect(language.name).toEqual(mockClient.languages[index].name);
-        expect(language.is_primary).toEqual(mockClient.languages[index].is_primary);
+        expect(!!language.isPrimary).toEqual(mockClient.languages[index].isPrimary);
     });
 }

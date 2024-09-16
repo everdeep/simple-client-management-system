@@ -45,6 +45,7 @@ export class ClientService {
             }
             const clientMap = clientMapper.clientWithLanguages(rows);
             const client = clientMap.get(id) as ClientWithLanguages;
+            console.log(client);
             return ServiceResponse.success<ClientWithLanguages>('Client found', client);
         } catch (ex) {
             const errorMessage = `Error finding client with id ${id}:, ${(ex as Error).message}`;

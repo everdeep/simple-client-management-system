@@ -3,7 +3,7 @@ import type { Mock } from 'vitest';
 
 import { ClientRepository } from '@/api/client/clientRepository';
 import { ClientService } from '@/api/client/clientService';
-import { mockClients } from './mocks';
+import { mockClients, mockUnmappedClients } from './mocks';
 
 vi.mock('@/api/client/clientRepository');
 
@@ -19,9 +19,8 @@ describe('clientService', () => {
     describe('findAll', () => {
         it('return all clients', async () => {
 
-            console.log(mockClients);
             // Arrange
-            (clientRepositoryInstance.findAll as Mock).mockReturnValue(mockClients);
+            (clientRepositoryInstance.findAll as Mock).mockReturnValue(mockUnmappedClients);
 
             // Act
             const result = await clientServiceInstance.findAll();
@@ -67,7 +66,8 @@ describe('clientService', () => {
             // Arrange
             const testId = 1;
             const mockClient = mockClients.find((client) => client.id === testId);
-            (clientRepositoryInstance.findById as Mock).mockReturnValue(mockClient);
+            const mockClientUnmapped = mockUnmappedClients.filter((client) => client.id === testId);
+            (clientRepositoryInstance.findById as Mock).mockReturnValue(mockClientUnmapped);
 
             // Act
             const result = await clientServiceInstance.findById(testId);
