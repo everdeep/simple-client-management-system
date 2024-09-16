@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import './Application.scss';
 import { icons } from '../Icons';
+import { ClientTable } from '../ClientTable';
 
 const Application: React.FC = () => {
   const [darkTheme, setDarkTheme] = useState(true);
@@ -40,7 +41,11 @@ const Application: React.FC = () => {
     setDarkTheme(!darkTheme);
   }
 
-  return <div className='application'></div>;
+  return (
+    <div className='application'>
+      <ClientTable />
+    </div>
+  );
 };
 
 export default Application;

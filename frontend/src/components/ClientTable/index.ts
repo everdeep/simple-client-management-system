@@ -1,1 +1,1 @@
-export { default } from './ClientTable';
+export { ClientTable } from './ClientTable';
