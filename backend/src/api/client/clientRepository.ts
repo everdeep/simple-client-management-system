@@ -15,7 +15,8 @@ export class ClientRepository {
                 c.dob, 
                 c.created_at, 
                 c.updated_at, 
-                f.name AS funding_source, 
+                f.name AS funding_source,
+                l.id AS language_id, 
                 l.name AS language_name, 
                 cl.is_primary 
             FROM clients c
@@ -39,7 +40,8 @@ export class ClientRepository {
                 c.created_at, 
                 c.updated_at, 
                 f.name AS funding_source, 
-                l.name AS language_name, 
+                l.name AS language_name,
+                l.id AS language_id,
                 cl.is_primary 
             FROM clients c
             LEFT JOIN client_languages cl ON c.id = cl.client_id
@@ -56,9 +58,37 @@ export class ClientRepository {
         return result.insertId;
     }
 
-    async updateClient(client: Client): Promise<number> {
-        const [result] = await pool.query<ResultSetHeader>('UPDATE clients SET ? WHERE id = ?', [client, client.id]);
-        return result.affectedRows;
+    async updateClient(id: number, client: Client, languages: Language[]): Promise<number> {
+        let affectedRows = 0;
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Update client information
+            let [result] = await connection.query<ResultSetHeader>('UPDATE clients SET ? WHERE id = ?', [client, id]);
+            affectedRows = result.affectedRows;
+
+            // Update client languages
+            if (languages) {
+                await connection.query('DELETE FROM client_languages WHERE client_id = ?', [id]);
+                const values = languages.map((language) => [id, language.id, language.is_primary]);
+                [result] = await connection.query<ResultSetHeader>(
+                    'INSERT INTO client_languages (client_id, language_id, is_primary) VALUES ?',
+                    [values]
+                );
+            }
+            affectedRows += result.affectedRows;
+
+            await connection.commit();
+        } catch (e) {
+            console.error('Error updating client', e);
+            await connection.rollback();
+            return 0;
+        } finally {
+            connection.release();
+        }
+
+        return affectedRows;
     }
 
     async deleteClient(id: number): Promise<number> {
@@ -79,18 +109,5 @@ export class ClientRepository {
             [clientId]
         );
         return rows as Language[];
-    }
-
-    async updateClientLanguages(
-        clientId: number,
-        languages: Language[]
-    ): Promise<number> {
-        await pool.query('DELETE FROM client_languages WHERE client_id = ?', [clientId]);
-        const values = languages.map((language) => [clientId, language.id, language.is_primary]);
-        const [result] = await pool.query<ResultSetHeader>(
-            'INSERT INTO client_languages (client_id, language_id, is_primary) VALUES ?',
-            [values]
-        );
-        return result.affectedRows;
     }
 }

@@ -4,11 +4,11 @@ import { z } from 'zod';
 
 import { createApiResponse } from '@/api-docs/openAPIResponseBuilders';
 import {
-    CreateClientSchema,
-    LanguageUpdateSchema,
-    ClientUpdateSchema,
-    GetClientSchema,
     ClientSchema,
+    CreateClientSchema,
+    UpdateClientSchema,
+    GetClientSchema,
+    ClientWithLanguagesSchema,
 } from '@/api/client/clientModel';
 import { LanguageSchema } from '@/api/language/languageModel';
 import { validateRequest } from '@/common/utils/httpHandlers';
@@ -17,28 +17,28 @@ import { clientController } from './clientController';
 export const clientRegistry = new OpenAPIRegistry();
 export const clientRouter: Router = express.Router();
 
-clientRegistry.register('Client', ClientSchema);
+clientRegistry.register('Client', ClientWithLanguagesSchema);
 
-// GET /clients
+// Get all clients
 clientRegistry.registerPath({
     method: 'get',
     path: '/clients',
     tags: ['Client'],
-    responses: createApiResponse(z.array(ClientSchema), 'Success'),
+    responses: createApiResponse(z.array(ClientWithLanguagesSchema), 'Success'),
 });
 clientRouter.get('/', clientController.getClients);
 
-// GET /clients/:id
+// Get a client
 clientRegistry.registerPath({
     method: 'get',
     path: '/clients/{id}',
     tags: ['Client'],
     request: { params: GetClientSchema.shape.params },
-    responses: createApiResponse(ClientSchema, 'Success'),
+    responses: createApiResponse(ClientWithLanguagesSchema, 'Success'),
 });
 clientRouter.get('/:id', validateRequest(GetClientSchema), clientController.getClient);
 
-// GET /clients/:id/languages
+// Get a client's languages
 clientRegistry.registerPath({
     method: 'get',
     path: '/clients/{id}/languages',
@@ -48,7 +48,7 @@ clientRegistry.registerPath({
 });
 clientRouter.get('/:id/languages', validateRequest(GetClientSchema), clientController.getClientLanguages);
 
-// POST /clients
+// Create a client
 clientRegistry.registerPath({
     method: 'post',
     path: '/clients',
@@ -67,40 +67,32 @@ clientRegistry.registerPath({
 });
 clientRouter.post('/', validateRequest(CreateClientSchema), clientController.createClient);
 
-// PUT /clients
+// Update a client
 clientRegistry.registerPath({
     method: 'put',
-    path: '/clients',
+    path: '/clients/{id}',
     tags: ['Client'],
     request: {
+        params: UpdateClientSchema.shape.params,
         body: {
             description: 'Update a client',
             content: {
                 'application/json': {
-                    schema: ClientUpdateSchema.shape.body,
+                    schema: UpdateClientSchema.shape.body,
                 },
             },
         },
     },
     responses: createApiResponse(z.number(), 'Success'),
 });
-clientRouter.put('/', validateRequest(ClientUpdateSchema), clientController.updateClient);
+clientRouter.put('/:id', validateRequest(UpdateClientSchema), clientController.updateClient);
 
-// PUT /clients/languages
+// Delete a client
 clientRegistry.registerPath({
-    method: 'put',
-    path: '/clients/languages',
+    method: 'delete',
+    path: '/clients/{id}',
     tags: ['Client'],
-    request: {
-        body: {
-            description: "Update a client's languages",
-            content: {
-                'application/json': {
-                    schema: LanguageUpdateSchema.shape.body,
-                },
-            },
-        },
-    },
+    request: { params: GetClientSchema.shape.params },
     responses: createApiResponse(z.number(), 'Success'),
 });
-clientRouter.put('/languages', validateRequest(LanguageUpdateSchema), clientController.updateClientLanguages);
+clientRouter.delete('/:id', validateRequest(GetClientSchema), clientController.deleteClient);

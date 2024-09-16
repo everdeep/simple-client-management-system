@@ -1,6 +1,6 @@
-import type { Client } from '@/api/client/clientModel';
+import type { ClientWithLanguages } from '@/api/client/clientModel';
 
-export const mockClients: Client[] = [
+export const mockClients: ClientWithLanguages[] = [
     {
         id: 1,
         first_name: 'John',
@@ -8,19 +8,43 @@ export const mockClients: Client[] = [
         last_name: 'Smith',
         email: 'john@example.com',
         dob: '1990-01-01',
-        funding_id: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: '2021-01-01',
+        updated_at: '2021-01-01',
+        funding_source: 'NDIS',
+        languages: [
+            {
+                id: 1,
+                name: 'English',
+                is_primary: true,
+            },
+            {
+                id: 2,
+                name: 'Spanish',
+                is_primary: false,
+            },
+        ],
     },
     {
-        id: 1,
+        id: 2,
         first_name: 'Jane',
         middle_name: 'Doe',
         last_name: 'Smith',
         email: 'jane@example.com',
         dob: '1990-01-01',
-        funding_id: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: '2021-01-01',
+        updated_at: '2021-01-01',
+        funding_source: 'NDIS',
+        languages: [
+            {
+                id: 3,
+                name: 'French',
+                is_primary: true,
+            },
+            {
+                id: 1,
+                name: 'English',
+                is_primary: false,
+            },
+        ],
     },
 ];

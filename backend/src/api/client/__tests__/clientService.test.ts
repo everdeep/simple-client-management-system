@@ -18,8 +18,10 @@ describe('clientService', () => {
 
     describe('findAll', () => {
         it('return all clients', async () => {
+
+            console.log(mockClients);
             // Arrange
-            (clientRepositoryInstance.findAllAsync as Mock).mockReturnValue(mockClients);
+            (clientRepositoryInstance.findAll as Mock).mockReturnValue(mockClients);
 
             // Act
             const result = await clientServiceInstance.findAll();
@@ -33,7 +35,7 @@ describe('clientService', () => {
 
         it('returns a not found error for no clients found', async () => {
             // Arrange
-            (clientRepositoryInstance.findAllAsync as Mock).mockReturnValue(null);
+            (clientRepositoryInstance.findAll as Mock).mockReturnValue(null);
 
             // Act
             const result = await clientServiceInstance.findAll();
@@ -45,9 +47,9 @@ describe('clientService', () => {
             expect(result.responseObject).toBeNull();
         });
 
-        it('handles errors for findAllAsync', async () => {
+        it('handles errors for findAll', async () => {
             // Arrange
-            (clientRepositoryInstance.findAllAsync as Mock).mockRejectedValue(new Error('Database error'));
+            (clientRepositoryInstance.findAll as Mock).mockRejectedValue(new Error('Database error'));
 
             // Act
             const result = await clientServiceInstance.findAll();
@@ -65,7 +67,7 @@ describe('clientService', () => {
             // Arrange
             const testId = 1;
             const mockClient = mockClients.find((client) => client.id === testId);
-            (clientRepositoryInstance.findByIdAsync as Mock).mockReturnValue(mockClient);
+            (clientRepositoryInstance.findById as Mock).mockReturnValue(mockClient);
 
             // Act
             const result = await clientServiceInstance.findById(testId);
@@ -77,10 +79,10 @@ describe('clientService', () => {
             expect(result.responseObject).toEqual(mockClient);
         });
 
-        it('handles errors for findByIdAsync', async () => {
+        it('handles errors for findById', async () => {
             // Arrange
             const testId = 1;
-            (clientRepositoryInstance.findByIdAsync as Mock).mockRejectedValue(new Error('Database error'));
+            (clientRepositoryInstance.findById as Mock).mockRejectedValue(new Error('Database error'));
 
             // Act
             const result = await clientServiceInstance.findById(testId);
@@ -95,7 +97,7 @@ describe('clientService', () => {
         it('returns a not found error for non-existent ID', async () => {
             // Arrange
             const testId = 1;
-            (clientRepositoryInstance.findByIdAsync as Mock).mockReturnValue(null);
+            (clientRepositoryInstance.findById as Mock).mockReturnValue(null);
 
             // Act
             const result = await clientServiceInstance.findById(testId);

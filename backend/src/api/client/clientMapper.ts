@@ -8,17 +8,15 @@ export class ClientMapper {
             // If client does not exist, initialize
             if (!clientsMap.get(row.id)) {
                 clientsMap.set(row.id, {
-                    client: {
-                        id: row.id,
-                        first_name: row.first_name,
-                        middle_name: row.middle_name,
-                        last_name: row.last_name,
-                        email: row.email,
-                        dob: row.dob,
-                        created_at: row.created_at,
-                        updated_at: row.updated_at,
-                        funding_source: row.funding_source,
-                    },
+                    id: row.id,
+                    first_name: row.first_name,
+                    middle_name: row.middle_name,
+                    last_name: row.last_name,
+                    email: row.email,
+                    dob: row.dob,
+                    created_at: row.created_at,
+                    updated_at: row.updated_at,
+                    funding_source: row.funding_source,
                     languages: [],
                 });
             }
@@ -26,6 +24,7 @@ export class ClientMapper {
             // Add language if it exists
             if (row.language_name) {
                 clientsMap.get(row.id)?.languages.push({
+                    id: row.language_id,
                     name: row.language_name,
                     is_primary: row.is_primary,
                 });

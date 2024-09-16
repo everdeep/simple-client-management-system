@@ -1,24 +1,21 @@
 import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 
-import type { Client } from '@/api/client/clientModel';
+import type { ClientWithLanguages } from '@/api/client/clientModel';
 import type { ServiceResponse } from '@/common/models/serviceResponse';
 import { app } from '@/server';
-
 
 describe('Client API Endpoints', () => {
     describe('GET /clients', () => {
         it('should return a list of clients', async () => {
             // Act
             const response = await request(app).get('/clients');
-            const responseBody: ServiceResponse<Client[]> = response.body;
+            const responseBody: ServiceResponse<ClientWithLanguages[]> = response.body;
 
             // Assert
             expect(response.statusCode).toEqual(StatusCodes.OK);
             expect(responseBody.success).toBeTruthy();
             expect(responseBody.message).toContain('Clients found');
-            // expect(responseBody.responseObject.length).toEqual(clients.length);
-            // responseBody.responseObject.forEach((client, index) => compareClients(clients[index] as Client, client));
         });
     });
 
@@ -33,12 +30,19 @@ describe('Client API Endpoints', () => {
                 last_name: 'Doe',
                 email: 'johndoe@fake.com',
                 dob: '1990-01-01',
-                funding_id: 1
-            } as Client;
+                funding_source: 'NDIS',
+                languages: [
+                    {
+                        id: 1,
+                        name: 'English',
+                        is_primary: true,
+                    },
+                ],
+            } as ClientWithLanguages;
 
             // Act
             const response = await request(app).get(`/clients/${testId}`);
-            const responseBody: ServiceResponse<Client> = response.body;
+            const responseBody: ServiceResponse<ClientWithLanguages> = response.body;
 
             // Assert
             expect(response.statusCode).toEqual(StatusCodes.OK);
@@ -78,7 +82,7 @@ describe('Client API Endpoints', () => {
     });
 });
 
-function compareClients(mockClient: Client, responseClient: Client) {
+function compareClients(mockClient: ClientWithLanguages, responseClient: ClientWithLanguages) {
     if (!mockClient || !responseClient) {
         throw new Error('Invalid test data: mockClient or responseClient is undefined');
     }
@@ -89,7 +93,11 @@ function compareClients(mockClient: Client, responseClient: Client) {
     expect(responseClient.last_name).toEqual(mockClient.last_name);
     expect(responseClient.email).toEqual(mockClient.email);
     expect(responseClient.dob).toEqual(mockClient.dob);
-    expect(responseClient.funding_id).toEqual(mockClient.funding_id);
-    // expect(new Date(responseClient.createdAt)).toEqual(mockClient.createdAt);
-    // expect(new Date(responseClient.updatedAt)).toEqual(mockClient.updatedAt);
+    expect(responseClient.funding_source).toEqual(mockClient.funding_source);
+    expect(responseClient.languages.length).toEqual(mockClient.languages.length);
+    responseClient.languages.forEach((language, index) => {
+        expect(language.id).toEqual(mockClient.languages[index].id);
+        expect(language.name).toEqual(mockClient.languages[index].name);
+        expect(language.is_primary).toEqual(mockClient.languages[index].is_primary);
+    });
 }

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { Client, ClientWithLanguages } from '@/api/client/clientModel';
+import { Client, ClientWithLanguages, UpdateClient } from '@/api/client/clientModel';
 import { Language } from '@/api/language/languageModel';
 import { clientMapper } from '@/api/client/clientMapper';
 import { ClientRepository } from '@/api/client/clientRepository';
@@ -74,18 +74,37 @@ export class ClientService {
     }
 
     // Updates an existing client
-    async updateClient(client: Client): Promise<ServiceResponse<number | null>> {
+    async updateClient(id: number, clientUpdate: UpdateClient): Promise<ServiceResponse<number | null>> {
         try {
             // Check if client exists
-            const existingClient = await this.clientRepository.findById(client.id);
+            const existingClient = await this.clientRepository.findById(id);
             if (!existingClient || existingClient.length === 0) {
                 return ServiceResponse.failure('Client not found', null, StatusCodes.NOT_FOUND);
             }
 
-            const result = await this.clientRepository.updateClient(client);
-            if (result === 0) {
-                throw new Error('Client not found');
+            const { languages, ...client } = clientUpdate;
+
+            // If updating languages, ensure they are unique
+            // Check unique language IDs
+            const uniqueLanguages = new Set<number>();
+            for (const language of languages) {
+                if (uniqueLanguages.has(language.id)) {
+                    return ServiceResponse.failure('Language IDs must be unique', null, StatusCodes.BAD_REQUEST);
+                }
+                uniqueLanguages.add(language.id);
             }
+
+            // Can only be one primary language
+            const primaryLanguages = languages.filter((language) => language.is_primary);
+            if (primaryLanguages.length > 1) {
+                return ServiceResponse.failure('Only one primary language is allowed', null, StatusCodes.BAD_REQUEST);
+            }
+
+            const result = await this.clientRepository.updateClient(id, client as Client, languages);
+            if (result === 0) {
+                throw new Error('No client found or updated');
+            }
+
             return ServiceResponse.success<number>('Client updated', result);
         } catch (ex) {
             const errorMessage = `Error updating client: ${(ex as Error).message}`;
@@ -130,46 +149,6 @@ export class ClientService {
             logger.error(errorMessage);
             return ServiceResponse.failure(
                 'An error occurred while finding client.',
-                null,
-                StatusCodes.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
-
-    // Updates an existing client's languages
-    async updateClientLanguages(clientId: number, languages: Language[]): Promise<ServiceResponse<number | null>> {
-        try {
-            // Check if client exists
-            const client = await this.clientRepository.findById(clientId);
-            if (!client || client.length === 0) {
-                return ServiceResponse.failure('Client not found', null, StatusCodes.NOT_FOUND);
-            }
-
-            // Check unique language IDs
-            const uniqueLanguages = new Set<number>();
-            for (const language of languages) {
-                if (uniqueLanguages.has(language.id)) {
-                    return ServiceResponse.failure('Language IDs must be unique', null, StatusCodes.BAD_REQUEST);
-                }
-                uniqueLanguages.add(language.id);
-            }
-
-            // Can only be one primary language
-            const primaryLanguages = languages.filter((language) => language.is_primary);
-            if (primaryLanguages.length > 1) {
-                return ServiceResponse.failure('Only one primary language is allowed', null, StatusCodes.BAD_REQUEST);
-            }
-
-            const result = await this.clientRepository.updateClientLanguages(clientId, languages);
-            if (result === 0) {
-                throw new Error('Failed to update client languages');
-            }
-            return ServiceResponse.success<number>('Client languages updated', result);
-        } catch (ex) {
-            const errorMessage = `Error updating client languages: ${(ex as Error).message}`;
-            logger.error(errorMessage);
-            return ServiceResponse.failure(
-                'An error occurred while updating client languages.',
                 null,
                 StatusCodes.INTERNAL_SERVER_ERROR
             );

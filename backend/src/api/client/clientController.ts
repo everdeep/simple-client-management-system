@@ -21,7 +21,8 @@ class ClientController {
     };
 
     public updateClient: RequestHandler = async (req: Request, res: Response) => {
-        const serviceResponse = await clientService.updateClient(req.body);
+        const id = Number.parseInt(req.params.id as string, 10);
+        const serviceResponse = await clientService.updateClient(id, req.body);
         return handleServiceResponse(serviceResponse, res);
     };
 
@@ -34,11 +35,6 @@ class ClientController {
     public getClientLanguages: RequestHandler = async (req: Request, res: Response) => {
         const id = Number.parseInt(req.params.id as string, 10);
         const serviceResponse = await clientService.getClientLanguages(id);
-        return handleServiceResponse(serviceResponse, res);
-    }
-
-    public updateClientLanguages: RequestHandler = async (req: Request, res: Response) => {
-        const serviceResponse = await clientService.updateClientLanguages(req.body.clientId, req.body.languages);
         return handleServiceResponse(serviceResponse, res);
     };
 }
