@@ -20,6 +20,10 @@ export const getClientLanguages = async (
   return api.get(`/clients/${id}/languages`);
 };
 
+export const createClient = async (client: any) => {
+  return api.post('/clients', { ...client });
+}
+
 export const deleteClient = async (id: string) => {
   return api.delete(`/clients/${id}`);
 };

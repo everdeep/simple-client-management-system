@@ -31,7 +31,7 @@ export type Client = {
 export type ClientLanguage = {
   id: string;
   name?: string;
-  isPrimary: string;
+  isPrimary: boolean;
 };
 
 export type Language = {
