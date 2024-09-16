@@ -52,7 +52,7 @@ OR
 ```bash
 # Start the frontend
 cd frontend
-yarn workspace app start
+yarn start
 ```
 
 ```bash
@@ -83,7 +83,7 @@ npm run build
 ## References
 This project utilises boilerplate repositories for both the frontend and backend in order to ensure high quality code and standards.
 
-[Frontend](https://github.com/kriasoft/react-starter-kit)  
+[Frontend](https://github.com/codesbiome/react-webpack-typescript-2023)  
 [Backend](https://github.com/edwinhern/express-typescript-2024)
 
 ## Issues

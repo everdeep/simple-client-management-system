@@ -4,9 +4,9 @@
   "description": "Simple Client Management System",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"cd frontend && yarn workspace app start\" \"cd backend && npm run dev\"",
+    "start": "concurrently \"cd frontend && yarn start\" \"cd backend && npm run dev\"",
     "backend": "cd backend && npm run dev",
-    "frontend": "cd frontend && yarn workspace app start"
+    "frontend": "cd frontend && yarn start"
   },
   "repository": "everdeep/simple-client-management-system",
   "author": "Sebastian Bird",
