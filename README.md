@@ -8,8 +8,6 @@ Using node.js and express.js, create a REST API with basic CRUD endpoints to cre
 
 Finally, create a simple React and TypeScript front end to list and create clients using the above API.
 
-## Project Architecture
-
 ## Requirements
 
 - Docker Desktop with Docker Compose ([Instructions](#installing-docker-compose))
@@ -129,3 +127,12 @@ Please update your Node.js version to the latest stable version.
     ```
 
     Note: Docker Desktop includes Docker Compose by default, so installing Docker Desktop also installs Docker Compose.
+
+## Future improvements
+- Add validation to the client creation form
+- Fix styling for page and form dialogs
+- Add delete client functionality
+- Add update client functionality
+- Add search functionality
+- Add client dialog view
+- Add consistent testing
