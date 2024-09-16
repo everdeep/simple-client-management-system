@@ -130,6 +130,9 @@ Please update your Node.js version to the latest stable version.
 
 ## Future improvements
 - Add validation to the client creation form
+- Add better language handling for the client creation form
+- Add alerts, confirmations and more user feedback for actions
+- Add loading states for API calls
 - Fix styling for page and form dialogs
 - Add delete client functionality
 - Add update client functionality
