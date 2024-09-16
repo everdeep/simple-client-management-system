@@ -61,6 +61,4 @@ CREATE UNIQUE INDEX client_languages_index_client_id_language_id ON client_langu
     language_id ASC
 );
 
-CREATE UNIQUE INDEX client_languages_index_client_id_is_primary ON client_languages (client_id ASC, is_primary ASC);
-
 CREATE UNIQUE INDEX funding_sources_name ON funding_sources (name ASC);
